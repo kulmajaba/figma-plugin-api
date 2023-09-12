@@ -1,0 +1,43 @@
+{
+  "name": "figma-plugin-api",
+  "version": "0.1.0",
+  "description": "Harness JSON-RPC in your Figma plugin communication.",
+  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist/* && npm run build:common && npm run build:esm && npm run build:types",
+    "build:common": "esbuild src/index.ts --target=es2020 --sourcemap --bundle --outfile=dist/index.js",
+    "build:esm": "esbuild src/index.ts --target=es2020 --format=esm --sourcemap --bundle --outfile=dist/index.esm.js",
+    "build:types": "tsc --emitDeclarationOnly --declaration --project tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kulmajaba/figma-plugin-api.git"
+  },
+  "keywords": [
+    "figma",
+    "plugin",
+    "json-rpc"
+  ],
+  "author": "Mika Kuitunen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kulmajaba/figma-plugin-api/issues"
+  },
+  "homepage": "https://github.com/kulmajaba/figma-plugin-api#readme",
+  "devDependencies": {
+    "@figma/plugin-typings": "*",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "esbuild": "^0.19.2",
+    "eslint": "^8.49.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-import-resolver-typescript": "^3.6.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {}
+}
