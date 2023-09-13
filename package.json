@@ -1,6 +1,6 @@
 {
   "name": "figma-plugin-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Harness JSON-RPC in your Figma plugin communication.",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
@@ -13,8 +13,8 @@
   ],
   "scripts": {
     "build": "rm -rf lib/* && npm run build:common && npm run build:esm && npm run build:types",
-    "build:common": "esbuild src/index.ts --target=es2020 --sourcemap --bundle --outfile=lib/index.cjs",
-    "build:esm": "esbuild src/index.ts --target=es2020 --format=esm --sourcemap --bundle --outfile=lib/index.mjs",
+    "build:common": "esbuild src/index.ts --target=es2017 --sourcemap --bundle --outfile=lib/index.cjs",
+    "build:esm": "esbuild src/index.ts --target=es2017 --format=esm --sourcemap --bundle --outfile=lib/index.mjs",
     "build:types": "tsc --emitDeclarationOnly --declaration",
     "prepublishOnly": "npm run build"
   },
