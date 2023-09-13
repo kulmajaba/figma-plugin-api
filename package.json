@@ -9,7 +9,7 @@
     "build": "rm -rf dist/* && npm run build:common && npm run build:esm && npm run build:types",
     "build:common": "esbuild src/index.ts --target=es2020 --sourcemap --bundle --outfile=dist/index.js",
     "build:esm": "esbuild src/index.ts --target=es2020 --format=esm --sourcemap --bundle --outfile=dist/index.esm.js",
-    "build:types": "tsc --emitDeclarationOnly --declaration --project tsconfig.json"
+    "build:types": "tsc --emitDeclarationOnly --declaration"
   },
   "repository": {
     "type": "git",

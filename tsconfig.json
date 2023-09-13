@@ -1,12 +1,9 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM"],
     "strict": true,
     "types": ["@figma/plugin-typings"],
-    "outFile": "dist/index.js",
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "outDir": "dist"
   }
 }
