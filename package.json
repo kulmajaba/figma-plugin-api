@@ -9,7 +9,8 @@
     "build": "rm -rf dist/* && npm run build:common && npm run build:esm && npm run build:types",
     "build:common": "esbuild src/index.ts --target=es2020 --sourcemap --bundle --outfile=dist/index.js",
     "build:esm": "esbuild src/index.ts --target=es2020 --format=esm --sourcemap --bundle --outfile=dist/index.esm.js",
-    "build:types": "tsc --emitDeclarationOnly --declaration"
+    "build:types": "tsc --emitDeclarationOnly --declaration",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,5 @@
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
-  },
-  "dependencies": {}
+  }
 }
