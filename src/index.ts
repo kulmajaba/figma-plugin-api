@@ -2,8 +2,7 @@ import { handleRaw, sendRequest, setup } from './rpc';
 import { ApiFunctions, AwaitedReturn, RPCAPIReturnType, RPCOptions, RPCSendRaw, StrictParameters } from './types';
 import { logBase, strictObjectKeys } from './utils';
 
-// TODO: Expose types with config
-export { RPCOptions } from './types';
+export { ApiFunctions, RPCAPIReturnType, RPCOptions } from './types';
 
 let sendRaw: RPCSendRaw;
 /**
@@ -39,6 +38,9 @@ const setupMessaging = (
         sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage }, '*');
       }
     }
+  } else {
+    // Should not happen but log an error just in case
+    console.warn('Both parent and figma are undefined, it seems like the runtime is neither Figma nor a browser');
   }
 };
 
@@ -64,7 +66,7 @@ const createAPI = <T extends ApiFunctions>(
   if (hostType !== 'undefined') {
     // Should not happen but log an error just in case
     if (sendRaw === undefined) {
-      console.error('createAPI: sendRaw is undefined at during setup, the API will not work');
+      console.error('sendRaw is undefined at during setup, the API will not work');
     }
 
     setup(methods, sendRaw, logBase);

@@ -1,5 +1,4 @@
 import { InvalidRequest, MethodNotFound, RPCError } from './errors';
-
 import {
   ApiFunctions,
   LogLevel,
@@ -19,12 +18,10 @@ import {
 const DEFAULT_TIMEOUT_MS = 3000;
 
 // Debugging setup
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // Generic logger that is overridden with a more specific one by setup
 type Logger = (level: LogLevel, ...msg: unknown[]) => void;
 let logBase: Logger = (level, ...msg) => console[level](...msg);
 
-const log = (...msg: unknown[]) => logBase('log', ...msg);
 const logWarn = (...msg: unknown[]) => logBase('warn', ...msg);
 const logError = (...msg: unknown[]) => logBase('error', ...msg);
 /* eslint-enable @typescript-eslint/no-unused-vars */
