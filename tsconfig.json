@@ -4,7 +4,7 @@
     "lib": ["ESNext", "DOM"],
     "strict": true,
     "types": ["@figma/plugin-typings"],
-    "outDir": "dist",
+    "outDir": "lib",
     "skipLibCheck": true
   }
 }
