@@ -4,7 +4,7 @@
   "description": "Harness JSON-RPC in your Figma plugin communication.",
   "module": "dist/index.esm.js",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist/* && npm run build:common && npm run build:esm && npm run build:types",
     "build:common": "esbuild src/index.ts --target=es2020 --sourcemap --bundle --outfile=dist/index.js",

@@ -90,6 +90,8 @@ export type RPCOptions = {
   uiTargetOrigin?: string;
 };
 
+export type RPCDefaultOptions = Required<Omit<RPCOptions, 'pluginId'>>;
+
 export type RPCSendRaw = <P extends unknown[], T>(message: RPCMessage<P, T>) => void;
 
 export const isRpcOutGoing = <P extends unknown[], T>(

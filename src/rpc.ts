@@ -15,8 +15,6 @@ import {
   isRpcResponseResult
 } from './types';
 
-const DEFAULT_TIMEOUT_MS = 3000;
-
 // Debugging setup
 // Generic logger that is overridden with a more specific one by setup
 type Logger = (level: LogLevel, ...msg: unknown[]) => void;
@@ -160,7 +158,7 @@ export const sendNotification = <P extends unknown[]>(method: string, params: P)
   sendJson({ jsonrpc: '2.0', method, params });
 };
 
-export const sendRequest = <K extends MethodName, P extends unknown[]>(method: K, params: P, timeoutMs?: number) => {
+export const sendRequest = <K extends MethodName, P extends unknown[]>(method: K, params: P, timeoutMs: number) => {
   return new Promise((resolve, reject) => {
     const id = rpcIndex;
     const req: RPCRequest<P> = { jsonrpc: '2.0', method, params, id };
@@ -174,12 +172,12 @@ export const sendRequest = <K extends MethodName, P extends unknown[]>(method: K
       resolve(result);
     };
 
-    // set a default timeout
+    // Set the timeout
     callback.timeout = setTimeout(() => {
       delete pending[id];
       logWarn(`Request id ${id} (${method}) timed out.`);
       reject(new Error(`Request ${id} (${method}) timed out.`));
-    }, timeoutMs ?? DEFAULT_TIMEOUT_MS);
+    }, timeoutMs);
 
     pending[id] = callback;
     sendJson(req);

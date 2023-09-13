@@ -1,42 +1,39 @@
 import { handleRaw, sendRequest, setup } from './rpc';
-import { ApiFunctions, AwaitedReturn, RPCAPIReturnType, RPCOptions, RPCSendRaw, StrictParameters } from './types';
+import {
+  ApiFunctions,
+  AwaitedReturn,
+  RPCAPIReturnType,
+  RPCDefaultOptions,
+  RPCOptions,
+  RPCSendRaw,
+  StrictParameters
+} from './types';
 import { logBase, strictObjectKeys } from './utils';
 
 export { ApiFunctions, RPCAPIReturnType, RPCOptions } from './types';
+
+const DEFAULT_OPTIONS: RPCDefaultOptions = {
+  timeoutMs: 3000,
+  logicTargetOrigin: '*',
+  uiTargetOrigin: '*'
+};
 
 let sendRaw: RPCSendRaw;
 /**
  * Set up sending and receiving of messages for Figma plugin logic and UI
  */
-const setupMessaging = (
-  pluginId: string | undefined,
-  logicTargetOrigin: string | undefined,
-  uiTargetOrigin: string | undefined
-) => {
+const setupMessaging = (pluginId: string | undefined, logicTargetOrigin: string, uiTargetOrigin: string) => {
   if (typeof figma !== 'undefined') {
     figma.ui.on('message', (message) => handleRaw(message));
 
-    if (logicTargetOrigin !== undefined) {
-      sendRaw = (message) => figma.ui.postMessage(message, { origin: logicTargetOrigin });
-    } else {
-      sendRaw = (message) => figma.ui.postMessage(message);
-    }
+    sendRaw = (message) => figma.ui.postMessage(message, { origin: logicTargetOrigin });
   } else if (typeof parent !== 'undefined') {
     onmessage = (event) => handleRaw(event.data.pluginMessage);
 
     if (pluginId !== undefined) {
-      if (uiTargetOrigin !== undefined) {
-        sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage, pluginId }, uiTargetOrigin);
-      } else {
-        sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage, pluginId }, '*');
-      }
+      sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage, pluginId }, uiTargetOrigin);
     } else {
-      if (uiTargetOrigin !== undefined) {
-        // TODO: Warn here?
-        sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage }, uiTargetOrigin);
-      } else {
-        sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage }, '*');
-      }
+      sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage }, uiTargetOrigin);
     }
   } else {
     // Should not happen but log an error just in case
@@ -56,7 +53,8 @@ const createAPI = <T extends ApiFunctions>(
   hostType: string,
   options?: RPCOptions
 ): Readonly<RPCAPIReturnType<T>> => {
-  const { timeoutMs, pluginId, logicTargetOrigin, uiTargetOrigin } = options ?? {};
+  const opts = { ...DEFAULT_OPTIONS, ...options };
+  const { timeoutMs, pluginId, logicTargetOrigin, uiTargetOrigin } = opts;
 
   if (sendRaw === undefined) {
     setupMessaging(pluginId, logicTargetOrigin, uiTargetOrigin);
