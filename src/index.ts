@@ -10,8 +10,8 @@ let sendRaw: RPCSendRaw;
  */
 const setupMessaging = (
   pluginId: string | undefined,
-  uiTargetOrigin: string | undefined,
-  logicTargetOrigin: string | undefined
+  logicTargetOrigin: string | undefined,
+  uiTargetOrigin: string | undefined
 ) => {
   if (typeof figma !== 'undefined') {
     figma.ui.on('message', (message) => handleRaw(message));
@@ -56,11 +56,10 @@ const createAPI = <T extends ApiFunctions>(
   hostType: string,
   options?: RPCOptions
 ): Readonly<RPCAPIReturnType<T>> => {
-  // TODO: ordering
   const { timeoutMs, pluginId, logicTargetOrigin, uiTargetOrigin } = options ?? {};
 
   if (sendRaw === undefined) {
-    setupMessaging(pluginId, uiTargetOrigin, logicTargetOrigin);
+    setupMessaging(pluginId, logicTargetOrigin, uiTargetOrigin);
   }
 
   if (hostType !== 'undefined') {
@@ -89,7 +88,8 @@ const createAPI = <T extends ApiFunctions>(
 };
 
 /**
- * Create a set of methods that are called from plugin logic and executed in plugin UI
+ * Create a set of methods that can be called from plugin logic and are executed in plugin UI
+ * This side has access to the browser API
  */
 export const createUIAPI = <T extends ApiFunctions>(
   methods: T,
@@ -99,7 +99,8 @@ export const createUIAPI = <T extends ApiFunctions>(
 };
 
 /**
- * Create a set of methods that are called from plugin UI and executed in plugin logic
+ * Create a set of methods that can be called from plugin UI and are executed in plugin logic
+ * This side has acccess to the `figma` API
  */
 export const createPluginAPI = <T extends ApiFunctions>(
   methods: T,
