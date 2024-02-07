@@ -60,13 +60,17 @@ figma.on('selectionchange', () => {
 });
 ```
 
-**NOTE: You must always import the APIs you have created in both the plugin and the UI, even if you aren't calling them.** It is necessary so that both modules can handle calls from each other.
+**NOTE: You must always import the file calling the API creator functions in both the plugin and the UI, even if you aren't calling any API methods in that module.**
+It is necessary so that both modules can handle calls from each other.
 
 ### Plugin options
 
 If needed, plugin options can be used to set plugin ID, target origins for messages passed between plugin and UI, and adjust timeout for API calls.
 
 **NOTE: If you are running a hosted (non-null origin) plugin UI, you must set `pluginId` to allow messages to be passed between plugin logic and UI.**
+
+The options work on a "latest takes presence" principle: when `createPluginAPI` or `createUIAPI` are called, whatever options are passed to them override any previous options.
+Remember that recreating the APIs with new options only on the plugin or only on the UI side will lead to the different sides of your API working with different options, so it is recommended to define a static common options object and use it for creating both APIs.
 
 ```ts
 import { createPluginAPI, createUIAPI, RPCOptions } from 'figma-plugin-api';
@@ -112,3 +116,8 @@ export const uiApi = createUIAPI(
   pluginOptions
 );
 ```
+
+### Library developers
+
+This library is intended to be imported from one source for the entire project as it behaves like a singleton and expects to be the only handler of RPC procotol calls.
+This means if you use this library in your library, add it as a `peerDependency` and ensure it is not bundled with your code.
