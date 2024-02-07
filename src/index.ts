@@ -1,4 +1,4 @@
-import { handleRaw, sendRequest, setup } from './rpc';
+import { handleRaw, sendRequest, setSendRaw, setupMethods } from './rpc';
 import {
   ApiFunctions,
   AwaitedReturn,
@@ -8,7 +8,7 @@ import {
   RPCSendRaw,
   StrictParameters
 } from './types';
-import { logBase, strictObjectKeys } from './utils';
+import { strictObjectKeys } from './utils';
 
 export { ApiFunctions, RPCAPIReturnType, RPCOptions } from './types';
 
@@ -18,17 +18,25 @@ const DEFAULT_OPTIONS: RPCDefaultOptions = {
   uiTargetOrigin: '*'
 };
 
+let rpcOptions: RPCOptions | undefined = undefined;
+let messageListenerSet = false;
 let sendRaw: RPCSendRaw;
 /**
  * Set up sending and receiving of messages for Figma plugin logic and UI
  */
 const setupMessaging = (pluginId: string | undefined, logicTargetOrigin: string, uiTargetOrigin: string) => {
   if (typeof figma !== 'undefined') {
-    figma.ui.on('message', (message) => handleRaw(message));
+    if (!messageListenerSet) {
+      figma.ui.on('message', (message) => handleRaw(message));
+      messageListenerSet = true;
+    }
 
     sendRaw = (message) => figma.ui.postMessage(message, { origin: logicTargetOrigin });
   } else if (typeof parent !== 'undefined') {
-    onmessage = (event) => handleRaw(event.data.pluginMessage);
+    if (!messageListenerSet) {
+      onmessage = (event) => handleRaw(event.data.pluginMessage);
+      messageListenerSet = true;
+    }
 
     if (pluginId !== undefined) {
       sendRaw = (pluginMessage) => parent.postMessage({ pluginMessage, pluginId }, uiTargetOrigin);
@@ -42,7 +50,7 @@ const setupMessaging = (pluginId: string | undefined, logicTargetOrigin: string,
 };
 
 /**
- * Creates one side of a JSON-RPC API for a Figma plugin
+ * Creates one side of a JSON-RPC API for a Figma plugin.
  * @param hostType A typeof string of an object that differentiates between on-host and off-host.
  * For example, if `typeof figma` is used, when `figma` is defined the creator is considered to be on-host
  * and the methods for processing the remote API calls are set up.
@@ -56,8 +64,11 @@ const createAPI = <T extends ApiFunctions>(
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const { timeoutMs, pluginId, logicTargetOrigin, uiTargetOrigin } = opts;
 
-  if (sendRaw === undefined) {
+  // Create messaging functions if not yet created, recreate if options have changed
+  if (JSON.stringify(rpcOptions) !== JSON.stringify(opts)) {
     setupMessaging(pluginId, logicTargetOrigin, uiTargetOrigin);
+    setSendRaw(sendRaw);
+    rpcOptions = opts;
   }
 
   if (hostType !== 'undefined') {
@@ -66,7 +77,7 @@ const createAPI = <T extends ApiFunctions>(
       console.error('sendRaw is undefined at during setup, the API will not work');
     }
 
-    setup(methods, sendRaw, logBase);
+    setupMethods(methods);
   }
 
   const api: RPCAPIReturnType<T> = strictObjectKeys(methods).reduce((prev, p) => {
@@ -86,7 +97,7 @@ const createAPI = <T extends ApiFunctions>(
 };
 
 /**
- * Create a set of methods that can be called from plugin logic and are executed in plugin UI
+ * Create a set of methods that can be called from plugin logic and are executed in plugin UI.
  * This side has access to the browser API
  */
 export const createUIAPI = <T extends ApiFunctions>(
@@ -97,7 +108,7 @@ export const createUIAPI = <T extends ApiFunctions>(
 };
 
 /**
- * Create a set of methods that can be called from plugin UI and are executed in plugin logic
+ * Create a set of methods that can be called from plugin UI and are executed in plugin logic.
  * This side has acccess to the `figma` API
  */
 export const createPluginAPI = <T extends ApiFunctions>(
