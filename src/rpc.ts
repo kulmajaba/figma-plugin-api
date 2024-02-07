@@ -144,13 +144,12 @@ const handleRequest = async <P extends unknown[]>(json: RPCRequest<P>) => {
  * @param _sendRaw Function for sending the raw JSON, e.g. `parent.postMessage`
  * @param _logBase Logger function for context-aware logging
  */
-export const setup = <T extends RPCMethodObject<ApiFunctions>>(
-  _methods: T,
-  _sendRaw: RPCSendRaw,
-  _logBase?: Logger
-) => {
+export const setupMethods = <T extends RPCMethodObject<ApiFunctions>>(_methods: T) => {
   Object.assign(methods, _methods);
-  sendRaw = _sendRaw;
+};
+
+export const setupAuxiliaries = (_sendRaw: RPCSendRaw, _logBase?: Logger) => {
+  sendRaw === undefined && (sendRaw = _sendRaw);
   _logBase !== undefined && (logBase = _logBase);
 };
 

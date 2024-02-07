@@ -1,4 +1,4 @@
-import { handleRaw, sendRequest, setup } from './rpc';
+import { handleRaw, sendRequest, setupAuxiliaries, setupMethods } from './rpc';
 import {
   ApiFunctions,
   AwaitedReturn,
@@ -42,7 +42,7 @@ const setupMessaging = (pluginId: string | undefined, logicTargetOrigin: string,
 };
 
 /**
- * Creates one side of a JSON-RPC API for a Figma plugin
+ * Creates one side of a JSON-RPC API for a Figma plugin.
  * @param hostType A typeof string of an object that differentiates between on-host and off-host.
  * For example, if `typeof figma` is used, when `figma` is defined the creator is considered to be on-host
  * and the methods for processing the remote API calls are set up.
@@ -66,8 +66,10 @@ const createAPI = <T extends ApiFunctions>(
       console.error('sendRaw is undefined at during setup, the API will not work');
     }
 
-    setup(methods, sendRaw, logBase);
+    setupMethods(methods);
   }
+
+  setupAuxiliaries(sendRaw, logBase);
 
   const api: RPCAPIReturnType<T> = strictObjectKeys(methods).reduce((prev, p) => {
     const method = async (...params: StrictParameters<T[keyof T]>) => {
@@ -86,7 +88,7 @@ const createAPI = <T extends ApiFunctions>(
 };
 
 /**
- * Create a set of methods that can be called from plugin logic and are executed in plugin UI
+ * Create a set of methods that can be called from plugin logic and are executed in plugin UI.
  * This side has access to the browser API
  */
 export const createUIAPI = <T extends ApiFunctions>(
@@ -97,7 +99,7 @@ export const createUIAPI = <T extends ApiFunctions>(
 };
 
 /**
- * Create a set of methods that can be called from plugin UI and are executed in plugin logic
+ * Create a set of methods that can be called from plugin UI and are executed in plugin logic.
  * This side has acccess to the `figma` API
  */
 export const createPluginAPI = <T extends ApiFunctions>(
