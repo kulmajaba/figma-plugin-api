@@ -1,7 +1,6 @@
 import { InvalidRequest, MethodNotFound, RPCError } from './errors';
 import {
   ApiFunctions,
-  LogLevel,
   RPCCallBack,
   RPCMessage,
   RPCMethodObject,
@@ -14,15 +13,7 @@ import {
   isRpcResponseError,
   isRpcResponseResult
 } from './types';
-
-// Debugging setup
-// Generic logger that is overridden with a more specific one by setup
-type Logger = (level: LogLevel, ...msg: unknown[]) => void;
-let logBase: Logger = (level, ...msg) => console[level](...msg);
-
-const logWarn = (...msg: unknown[]) => logBase('warn', ...msg);
-const logError = (...msg: unknown[]) => logBase('error', ...msg);
-/* eslint-enable @typescript-eslint/no-unused-vars */
+import { logError, logWarn } from './utils';
 
 // Methods for processing remote API calls (set up on-host)
 const methods: RPCMethodObject<ApiFunctions> = {};
@@ -148,9 +139,8 @@ export const setupMethods = <T extends RPCMethodObject<ApiFunctions>>(_methods: 
   Object.assign(methods, _methods);
 };
 
-export const setupAuxiliaries = (_sendRaw: RPCSendRaw, _logBase?: Logger) => {
-  sendRaw === undefined && (sendRaw = _sendRaw);
-  _logBase !== undefined && (logBase = _logBase);
+export const setSendRaw = (_sendRaw: RPCSendRaw) => {
+  sendRaw = _sendRaw;
 };
 
 export const sendNotification = <P extends unknown[]>(method: string, params: P) => {
