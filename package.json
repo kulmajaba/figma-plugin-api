@@ -12,10 +12,12 @@
     "src/"
   ],
   "scripts": {
+    "start": "npm run dev",
     "build": "rm -rf lib/* && npm run build:common && npm run build:esm && npm run build:types",
+    "dev": "concurrently -n index-cjs,index-esm,ts 'npm run build:common -- --watch' 'npm run build:esm -- --watch' 'npm run build:types -- --watch'",
     "build:common": "esbuild src/index.ts --target=es2017 --sourcemap --bundle --outfile=lib/index.cjs",
     "build:esm": "esbuild src/index.ts --target=es2017 --format=esm --sourcemap --bundle --outfile=lib/index.mjs",
-    "build:types": "tsc --emitDeclarationOnly --declaration",
+    "build:types": "tsc --emitDeclarationOnly --declaration --preserveWatchOutput",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -37,6 +39,7 @@
     "@figma/plugin-typings": "*",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.6.0",
+    "concurrently": "^8.2.2",
     "esbuild": "^0.19.2",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.0.0",
