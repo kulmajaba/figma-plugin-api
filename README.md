@@ -62,6 +62,7 @@ figma.on('selectionchange', () => {
 
 **NOTE: You must always import the file calling the API creator functions in both the plugin and the UI, even if you aren't calling any API methods in that module.**
 It is necessary so that both modules can handle calls from each other.
+You can use an unnamed import (e.g. `import './api'`) if you do not need to call any methods in the module.
 
 ### Plugin options
 
@@ -117,7 +118,47 @@ export const uiApi = createUIAPI(
 );
 ```
 
-### Library developers
+## Troubleshooting
+
+### Debugging tactics
+
+- Add logging to your API methods to see if they are being called
+- Add logging to the plugin and UI to see if messages are being received:
+  - Plugin logic:
+    ```ts
+    figma.ui.onmessage = (msg) => {
+      console.log('Plugin received message:', msg);
+    };
+    ```
+  - Plugin UI:
+
+    ```ts
+    window.addEventListener('message', (e) => {
+      // React specific: Do not log React dev tools messages
+      if (e.data.source?.includes('react-devtools')) {
+        return;
+      }
+
+      if (Object.hasOwn(e.data, 'pluginMessage')) {
+        console.log('UI received message:', e.data.pluginMessage);
+      } else {
+        console.log('UI received message:', e);
+      }
+    });
+    ```
+
+### Error: Request \<number\> (\<method name\>) timed out.
+
+Most probably either the remote API call doesn't get through to the handler side, there is no handler for it, or the return message doesn't get through to the caller side.
+Checklist:
+
+- Have you imported the api module in both plugin logic and plugin UI?
+  - Some packagers with certain configurations will drop unused named imports, so make sure to use `import './api-wrapper';` instead of `import { api } from './api-wrapper;` if you are not using any of the API functions. The first syntax commonly means "this module has side effects" and the import will be included.
+- Hosted plugins (non-null origin): have you set the plugin id to the API options?
+- If you have set `logicTargetOrigin` and/or `uiTargetOrigin`, are they correct?
+  - Omit them from the API options or set them to the `'*'` wildcard to test.
+
+## Library developers
 
 This library is intended to be imported from one source for the entire project as it behaves like a singleton and expects to be the only handler of RPC procotol calls.
 This means if you use this library in your library, add it as a `peerDependency` and ensure it is not bundled with your code.
