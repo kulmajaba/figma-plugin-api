@@ -21,6 +21,7 @@ type MethodName = keyof typeof methods & string;
 
 // Pending API calls (used off-host)
 const pending: Record<number, RPCCallBack<(typeof methods)[MethodName]>> = {};
+const timedOut: number[] = [];
 let rpcIndex = 0;
 
 let sendRaw: RPCSendRaw;
@@ -56,6 +57,9 @@ const sendError = (id: number, error: RPCError) => {
 const handleRpc = <P extends unknown[], T>(json: RPCNotification<P> | RPCResponse<T>) => {
   if (!isRpcNotification(json)) {
     if (isRpcResponse(json)) {
+      if (timedOut.includes(json.id)) {
+        return;
+      }
       const callback = pending[json.id];
       if (!callback) {
         sendError(json.id, new InvalidRequest(`Missing callback for ${json.id}`));
@@ -164,6 +168,7 @@ export const sendRequest = <K extends MethodName, P extends unknown[]>(method: K
     // Set the timeout
     callback.timeout = setTimeout(() => {
       delete pending[id];
+      timedOut.push(id);
       logWarn(`Request id ${id} (${method}) timed out.`);
       reject(new Error(`Request ${id} (${method}) timed out.`));
     }, timeoutMs);
