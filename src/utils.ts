@@ -3,7 +3,7 @@ import { LogLevel } from './types';
 const isFigma = typeof figma !== 'undefined';
 const isUi = typeof parent !== 'undefined';
 const logBase = (level: LogLevel, ...msg: unknown[]) =>
-  console[level](`RPC in ${isFigma ? 'logic' : isUi ? 'ui' : 'UNKNOWN'}:`, ...msg);
+  console[level](`figma-plugin-api in ${isFigma ? 'logic' : isUi ? 'UI' : 'UNKNOWN'}:`, ...msg);
 
 export const log = (...msg: unknown[]) => logBase('log', ...msg);
 export const logWarn = (...msg: unknown[]) => logBase('warn', ...msg);
