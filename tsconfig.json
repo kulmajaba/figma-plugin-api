@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
+    "rootDir": "./src",
     "types": ["@figma/plugin-typings"],
     "outDir": "lib",
     "lib": ["ESNext", "DOM"],

@@ -2,9 +2,8 @@
 
 export type LogLevel = 'log' | 'warn' | 'error';
 
-export type AwaitedReturn<T extends (...params: any) => any> = ReturnType<T> extends Promise<any>
-  ? Awaited<ReturnType<T>>
-  : ReturnType<T>;
+export type AwaitedReturn<T extends (...params: any) => any> =
+  ReturnType<T> extends Promise<any> ? Awaited<ReturnType<T>> : ReturnType<T>;
 
 export type StrictParameters<T extends (...args: any[]) => any> = T extends (...args: infer P) => any ? P : never;
 
