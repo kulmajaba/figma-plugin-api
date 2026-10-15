@@ -37,7 +37,7 @@
   "homepage": "https://github.com/kulmajaba/figma-plugin-api#readme",
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "^1.0.0",
-    "@figma/plugin-typings": "*",
+    "@figma/plugin-typings": "^1.141.0",
     "concurrently": "^8.2.2",
     "esbuild": "~0.28.2",
     "eslint": "^9.39.5",
