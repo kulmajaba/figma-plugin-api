@@ -36,17 +36,17 @@
   },
   "homepage": "https://github.com/kulmajaba/figma-plugin-api#readme",
   "devDependencies": {
-    "@figma/plugin-typings": "*",
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@typescript-eslint/parser": "^7.1.1",
+    "@figma/eslint-plugin-figma-plugins": "^1.0.0",
+    "@figma/plugin-typings": "^1.141.0",
     "concurrently": "^8.2.2",
-    "esbuild": "^0.20.1",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.2.5",
-    "typescript": "^5.3.3"
+    "esbuild": "~0.28.2",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.7",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2"
   }
 }

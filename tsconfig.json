@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM"],
     "strict": true,
+    "rootDir": "./src",
     "types": ["@figma/plugin-typings"],
     "outDir": "lib",
+    "lib": ["ESNext", "DOM"],
+    "target": "ESNext",
     "skipLibCheck": true
   }
 }
